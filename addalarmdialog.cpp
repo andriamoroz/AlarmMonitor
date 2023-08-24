@@ -6,14 +6,20 @@ AddAlarmDialog::AddAlarmDialog(QWidget *parent) :
     ui(new Ui::AddAlarmDialog)
 {
     ui->setupUi(this);
-
+    // регулярний вираз для перевірки правильності введення IPv4
     ipValidator = new QRegularExpressionValidator
         (QRegularExpression("^((\\d{1,2}|1\\d{2}|2[0-4]\\d|25[0-5])\\.){3}(\\d{1,2}|1\\d{2}|2[0-4]\\d|25[0-5])$"), this);
     ui->ipLineEdit->setValidator(ipValidator);
+    // регулярний вираз для перевірки правильності ввдеення порту
     portValidator = new QRegularExpressionValidator(QRegularExpression("^[0-9]{1,5}$"), this);
     ui->portLineEdit->setValidator(portValidator);
+    // регулярний вираз для перевірки правильності введення mac адреси
     macValidator = new QRegularExpressionValidator(QRegularExpression("^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"), this);
     ui->macLineEdit->setValidator(macValidator);
+    // регулярний вираз для перевірки правильності введення id
+    idValidator = new QRegularExpressionValidator(QRegularExpression("^[0-9]{1,3}$"), this);
+    ui->idLineEdit->setValidator(idValidator);
+
 
 }
 
@@ -44,6 +50,10 @@ void AddAlarmDialog::socketSetUp()
         QMessageBox::warning(this, "Warning", "Невірна IP адреса");
         return;
     }
+    if(checkPort == INADDR_NONE){
+        QMessageBox::warning(this, "Warning", "Невірний порт адреса");
+        return;
+    }
     ipAddress.sin_addr.s_addr = // Встановити IP адресу
     ipAddress.sin_port = htons(portEdtLineText.toInt()); // перетворення порта в мережевий байтовий порядок
 
@@ -51,6 +61,11 @@ void AddAlarmDialog::socketSetUp()
 
 void AddAlarmDialog::on_Ok_clicked()
 {
+    socketSetUp();
+    nameEdtLineText = ui->nameLineEdit->text();
+    macEdtLineText = ui->macLineEdit->text();
+    idEdtLineText = ui->idLineEdit->text();
+
     if(nameEdtLineText.isEmpty())
         QMessageBox::warning(this, "Warning", "Пусте поле вводу назви");
     if(macEdtLineText.isEmpty())
@@ -58,11 +73,8 @@ void AddAlarmDialog::on_Ok_clicked()
     if(idEdtLineText.isEmpty())
         QMessageBox::warning(this, "Warning", "Пусте поле вводу ідентифікатора");
 
-  //треба хробиьтит ще перевірку на ID щоб вона була цилочислена і значення записути в змінні до перевірки, бо воно завжди видає що поля путі
+    this->close();
+  //треба зробиьтит ще перевірку на ID щоб вона була цілочисленна і значення записути в змінні до перевірки, бо воно завжди видає що поля пусті
 
-    socketSetUp();
-    nameEdtLineText = ui->nameLineEdit->text();
-    macEdtLineText = ui->macLineEdit->text();
-    idEdtLineText = ui->idLineEdit->text();
 }
 

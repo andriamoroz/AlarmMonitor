@@ -19,6 +19,7 @@ public:
     void addItem(QObject* item, const QModelIndex &parentIdx);
     bool removeItem(const QModelIndex &index);
     QList<QModelIndex> getSavedIndexes();
+    QString getObjectName(const QModelIndex &index) const;
 
 
 protected:

@@ -54,7 +54,6 @@ bool ObjectTreeModel::removeItem(const QModelIndex &index)
     savedIndexes.removeAt(index.row()); // видаляємо індекс зі списку збережених індексів
     endRemoveRows();
 
-
     return true;
 }
 
@@ -66,6 +65,16 @@ QList<QModelIndex> ObjectTreeModel::getSavedIndexes()
     }
     return QList<QModelIndex>(); // якщо список пустий то повертаємо пустий список
 }
+
+QString ObjectTreeModel::getObjectName(const QModelIndex &index) const
+{
+    if(!index.isValid()){
+        return QString();
+    }
+    QObject* obj = objByIndex(index);
+    return obj->objectName();
+}
+
 
 QObject *ObjectTreeModel::objByIndex(const QModelIndex &index) const
 {

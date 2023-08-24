@@ -32,6 +32,7 @@ private:
     QRegularExpressionValidator *ipValidator;
     QRegularExpressionValidator *portValidator;
     QRegularExpressionValidator *macValidator;
+    QRegularExpressionValidator *idValidator;
     QString nameEdtLineText;
     QString ipEdtLineText;
     QString portEdtLineText;

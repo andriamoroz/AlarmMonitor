@@ -45,6 +45,7 @@ else()
             ConfigStruct.h
             streetMap.qml
             main.cpp mainwindow.cpp mainwindow.h mainwindow.ui
+            addregiondialog.h addregiondialog.cpp addregiondialog.ui
 
 
         )

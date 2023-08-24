@@ -28,14 +28,20 @@ MainWindow::MainWindow(QWidget *parent)
     ui->treeView->viewport()->installEventFilter(this);
     // Створення контекстного меню та його пункти
     contextMenu = new QMenu(this);
+    addNewRegionAction = new QAction("add region", this);
     addNewAlarmAction = new QAction("add alarm", this);
+    configurationAction = new QAction("configuration", this);
     removeAlarmAction = new QAction("remove alarm", this);
+    contextMenu->addAction(addNewRegionAction);
     contextMenu->addAction(addNewAlarmAction);
+    contextMenu->addAction(configurationAction);
     contextMenu->addAction(removeAlarmAction);
     ui->treeView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->treeView, &QTreeView::customContextMenuRequested, this, &MainWindow::onCustomContextMenuRequested);
+    connect(addNewRegionAction, &QAction::triggered, this, &MainWindow::onAddNewRegion);
     connect(addNewAlarmAction, &QAction::triggered, this, &MainWindow::onAddNewAlarm);
-    connect(removeAlarmAction, &QAction::triggered, this, &MainWindow::onRemoveAlarm);
+    connect(removeAlarmAction, &QAction::triggered, this, &MainWindow::onRemoveAlarmOrRegion);
+    connect(configurationAction, &QAction::triggered, this, &MainWindow::onConfiguration);
 
     // відображення карти
 
@@ -116,20 +122,55 @@ void MainWindow::onAddNewAlarm()
 
     newTreeItem->setObjectName(alarmDialog.getNameEdtLineText());
     _treeModel->addItem(newTreeItem, ui->treeView->currentIndex());
-    newTreeItem->objectName();
+
+
 
     //delete newItem; // якщо видалити newItem то він не зявляється в списку
 }
 
-void MainWindow::onRemoveAlarm()
+void MainWindow::onAddNewRegion()
+{
+    AddRegionDialog regionDialog;
+    QObject* newTreeItem = new QObject();
+    regionConfig_t newRegionConfig;
+    regionDialog.setModal(true);
+    regionDialog.exec();
+    if(regionDialog.getNameEdtLineText().isEmpty())
+    {
+        delete newTreeItem;
+        return;
+    }
+    newRegionConfig.name = regionDialog.getNameEdtLineText();
+    newRegionConfig.id = regionDialog.getIdEdtLineText();
+
+    newTreeItem->setObjectName(regionDialog.getNameEdtLineText());
+    _treeModel->addItem(newTreeItem, ui->treeView->currentIndex());
+
+}
+
+void MainWindow::onRemoveAlarmOrRegion()
+{
+    QModelIndex index = ui->treeView->currentIndex();
+    QString name = _treeModel->getObjectName(index);
+        if(index.isValid()){
+        {
+            if(name != firstTreeItem->objectName()){
+                qDebug() << "onRemoveAlarm";
+                _treeModel->removeItem(index);
+            }
+        }
+        }
+}
+
+void MainWindow::onConfiguration()
 {
     QModelIndex index = ui->treeView->currentIndex();
         if(index.isValid()){
         {
-            qDebug() << "onRemoveAlarm";
-            _treeModel->removeItem(index);
+            //_treeModel->
+            qDebug() << "onConfiguration";
         }
-    }
+        }
 }
 
 //ToDo

@@ -7,6 +7,7 @@
 #include "./ui_mainwindow.h"
 #include <QDebug>
 #include "addalarmdialog.h"
+#include "addregiondialog.h"
 #include "ConfigStruct.h"
 #include <QApplication>
 
@@ -28,7 +29,9 @@ public:
     bool eventFilter(QObject *obj, QEvent *event);
     void onCustomContextMenuRequested(const QPoint&); // обявлення слоту визону контекстного меню
     void onAddNewAlarm();
-    void onRemoveAlarm();
+    void onAddNewRegion();
+    void onRemoveAlarmOrRegion();
+    void onConfiguration();
 
 private:
     Ui::MainWindow *ui;
@@ -37,7 +40,9 @@ private:
 
     // обявлення контекстоного меню та екшенів для нього
     QMenu* contextMenu;
+    QAction* addNewRegionAction;
     QAction* addNewAlarmAction;
+    QAction* configurationAction;
     QAction* removeAlarmAction;
 
 
