@@ -45,15 +45,12 @@ void AddAlarmDialog::socketSetUp()
     checkIp = inet_addr(ipEdtLineText.toStdString().c_str());
     checkPort = htons(portEdtLineText.toInt());
 
-    if(checkIp == INADDR_NONE)
+    if(checkIp == INADDR_NONE || checkPort == INADDR_NONE)
     {
-        QMessageBox::warning(this, "Warning", "Невірна IP адреса");
+        QMessageBox::warning(this, "Warning", "Невірна IP адреса або порт");
         return;
     }
-    if(checkPort == INADDR_NONE){
-        QMessageBox::warning(this, "Warning", "Невірний порт адреса");
-        return;
-    }
+
     ipAddress.sin_addr.s_addr = // Встановити IP адресу
     ipAddress.sin_port = htons(portEdtLineText.toInt()); // перетворення порта в мережевий байтовий порядок
 
@@ -66,12 +63,9 @@ void AddAlarmDialog::on_Ok_clicked()
     macEdtLineText = ui->macLineEdit->text();
     idEdtLineText = ui->idLineEdit->text();
 
-    if(nameEdtLineText.isEmpty())
-        QMessageBox::warning(this, "Warning", "Пусте поле вводу назви");
-    if(macEdtLineText.isEmpty())
-        QMessageBox::warning(this, "Warning", "Пусте поле вводу mac адреси");
-    if(idEdtLineText.isEmpty())
-        QMessageBox::warning(this, "Warning", "Пусте поле вводу ідентифікатора");
+    if(nameEdtLineText.isEmpty() || macEdtLineText.isEmpty() || idEdtLineText.isEmpty())
+        QMessageBox::warning(this, "Warning",  "Заповніть всі поля!");
+
 
     this->close();
   //треба зробиьтит ще перевірку на ID щоб вона була цілочисленна і значення записути в змінні до перевірки, бо воно завжди видає що поля пусті

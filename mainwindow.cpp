@@ -108,6 +108,7 @@ void MainWindow::onAddNewAlarm()
     AddAlarmDialog alarmDialog;
     QObject* newTreeItem = new QObject();
     alarmConfig_t newAlarmConfig;
+    configManager = new ConfigManager();
     alarmDialog.setModal(true);
     alarmDialog.exec();
     if(alarmDialog.getNameEdtLineText().isEmpty())
@@ -119,7 +120,8 @@ void MainWindow::onAddNewAlarm()
     newAlarmConfig.id = alarmDialog.getIdEdtLineText();
     newAlarmConfig.ipAddress = alarmDialog.getIpEdtLineText();
     newAlarmConfig.macAddress = alarmDialog.getMacEdtLineText();
-
+    configManager->addAlarmConfig(newAlarmConfig);
+    configManager->saveToFile(newAlarmConfig);
     newTreeItem->setObjectName(alarmDialog.getNameEdtLineText());
     _treeModel->addItem(newTreeItem, ui->treeView->currentIndex());
 

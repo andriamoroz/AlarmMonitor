@@ -25,7 +25,7 @@ void AddRegionDialog::on_okButton_clicked()
     idEdtLineText = ui->idLineEdit->text();
 
     if(nameEdtLineText.isEmpty() || idEdtLineText.isEmpty()){
-        QMessageBox::warning(this, "Warning", "Заповніть всі поля");
+        QMessageBox::warning(this, "Warning", "Заповніть всі поля!");
         return;
     }
 

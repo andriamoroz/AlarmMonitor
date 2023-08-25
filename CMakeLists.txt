@@ -42,10 +42,11 @@ else()
             ${PROJECT_SOURCES}
             objecttreemodel.h objecttreemodel.cpp
             addalarmdialog.h addalarmdialog.cpp addalarmdialog.ui
-            ConfigStruct.h
+
             streetMap.qml
             main.cpp mainwindow.cpp mainwindow.h mainwindow.ui
             addregiondialog.h addregiondialog.cpp addregiondialog.ui
+            configmanager.h configmanager.cpp
 
 
         )
