@@ -6,32 +6,16 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    //Виклик методу для реалізації деревовидної структури
+    configManager = new ConfigManager();
+    configTreeMetod();
 
-    //створюємо модель дерева
-    _treeModel = new ObjectTreeModel(this);
-    QStringList cols;
-    cols << "objectName";
-    _treeModel->setColumns(cols);
-    // створюємо конфігураційні дані для регіону
-    regionConfig_t firstRegionConfig; // створюємо об'єкт структури для регіону
-    firstRegionConfig.name = "Перший об'єкт";
-    firstRegionConfig.id = 1;
-     // задаємо назву батькіському елементу
-    firstTreeItem = new QObject(this);
-    firstTreeItem->setObjectName(firstRegionConfig.name);
-    firstTreeItem->objectName();
-    // Додаємо елементи до моделі
-    _treeModel->addItem(firstTreeItem,QModelIndex());
-    // Встановлюємо модель у QTreeView
-    ui->treeView->setModel(_treeModel);
-    // Встановлюємо фільтр подій для QTreeView
-    ui->treeView->viewport()->installEventFilter(this);
     // Створення контекстного меню та його пункти
     contextMenu = new QMenu(this);
     addNewRegionAction = new QAction("add region", this);
     addNewAlarmAction = new QAction("add alarm", this);
     configurationAction = new QAction("configuration", this);
-    removeAlarmAction = new QAction("remove alarm", this);
+    removeAlarmAction = new QAction("remove", this);
     contextMenu->addAction(addNewRegionAction);
     contextMenu->addAction(addNewAlarmAction);
     contextMenu->addAction(configurationAction);
@@ -173,6 +157,42 @@ void MainWindow::onConfiguration()
             qDebug() << "onConfiguration";
         }
         }
+}
+
+void MainWindow::configTreeMetod()
+{
+        //створюємо модель дерева
+        _treeModel = new ObjectTreeModel(this);
+        QStringList cols;
+        cols << "objectName";
+        _treeModel->setColumns(cols);
+        // створюємо конфігураційні дані для регіону
+        regionConfig_t firstRegionConfig; // створюємо об'єкт структури для регіону
+        QList<regionConfig_t> tmpRegionConfigList; // створюємо список структур для регіонів
+        tmpRegionConfigList = configManager->getRegionConfigList();
+        if(tmpRegionConfigList.isEmpty())
+        {
+            firstRegionConfig.name = "Перший";
+            firstRegionConfig.id = 1;
+            configManager->addRegionConfig(firstRegionConfig);
+            configManager->saveToFile(firstRegionConfig);
+        }
+        else
+        {
+            firstRegionConfig = tmpRegionConfigList.first();
+        }
+        // задаємо назву батькіському елементу
+        firstTreeItem = new QObject(this);
+        firstTreeItem->setObjectName(firstRegionConfig.name);
+        firstTreeItem->objectName();
+        // Додаємо елементи до моделі
+        _treeModel->addItem(firstTreeItem,QModelIndex());
+        // Встановлюємо модель у QTreeView
+        ui->treeView->setModel(_treeModel);
+        // Встановлюємо фільтр подій для QTreeView
+        ui->treeView->viewport()->installEventFilter(this);
+
+
 }
 
 //ToDo

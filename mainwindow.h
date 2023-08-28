@@ -38,6 +38,7 @@ private:
     Ui::MainWindow *ui;
     ObjectTreeModel* _treeModel;
     QObject* firstTreeItem;
+    void configTreeMetod(); // метод для базового налаштування древовидної моделі
 
     // обявлення контекстоного меню та екшенів для нього
     QMenu* contextMenu;
@@ -50,10 +51,7 @@ private:
     ConfigManager* configManager;
 
 
-    треба реалізувати метод гет для списку структури alarmConfig_t в configManager
-    також ттреба написати аналогічний метод readFromAlarmConfigFrile тільки для регіонів
-    ще треба при запуску команди глянути чи не створений файл, якщо створений то зчитати з нього дані в список структур
-    і треба зробити перевірку при запуску програми на перший обєкт дерева, якщо файлу немає то створюємо якщо файл є то читаємо з файлу
+
 
 };
 #endif // MAINWINDOW_H

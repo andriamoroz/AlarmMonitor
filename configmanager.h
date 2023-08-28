@@ -43,6 +43,8 @@ public:
     void saveToFile(const regionConfig_t& regionConfig); // зберегти конфігурацію регіону в файл
     void readFromAlarmConfigFrile(); // прочитати конфігурацію сирени з файлу
     void readFromRegionConfigFrile(); // прочитати конфігурацію сирени з файлу
+    QList<alarmConfig_t> getAlarmConfigList(); // отримати список конфігурацій сирен
+    QList<regionConfig_t> getRegionConfigList(); // отримати список конфігурацій регіонів
 
 
 
