@@ -39,6 +39,7 @@ private:
     ObjectTreeModel* _treeModel;
     QObject* firstTreeItem;
     void configTreeMetod(); // метод для базового налаштування древовидної моделі
+    void addItemFromFileToTreeMetod(); // метод для додавання нових елементів в дерево
 
     // обявлення контекстоного меню та екшенів для нього
     QMenu* contextMenu;

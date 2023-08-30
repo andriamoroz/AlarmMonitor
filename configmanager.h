@@ -14,6 +14,7 @@
 typedef struct
 {
     QString name;
+    QString fatherName;
     SOCKADDR_IN ipAddress;
     QString macAddress;
     int id;
@@ -23,6 +24,7 @@ typedef struct
 typedef struct
 {
     QString name;
+    QString fatherName;
     int id;
 } regionConfig_t;
 
@@ -36,15 +38,17 @@ class ConfigManager
 public:
     ConfigManager();
 
-    void addAlarmConfig(const alarmConfig_t& alarmConfig); // додати конфігурацію сирени
-    void addRegionConfig(const regionConfig_t& regionConfig); // додати конфігурацію регіону
+    bool addAlarmConfig(const alarmConfig_t& alarmConfig); // додати конфігурацію сирени
+    bool addRegionConfig(const regionConfig_t& regionConfig); // додати конфігурацію регіону
     bool isNameUnique(const QString& name); // перевірити чи унікальна назва обєкта
     void saveToFile(const alarmConfig_t& alarmConfig);  // зберегти конфігурацію сирени в файл
     void saveToFile(const regionConfig_t& regionConfig); // зберегти конфігурацію регіону в файл
-    void readFromAlarmConfigFrile(); // прочитати конфігурацію сирени з файлу
-    void readFromRegionConfigFrile(); // прочитати конфігурацію сирени з файлу
+    void readFromAlarmConfigFile(); // прочитати конфігурацію сирени з файлу
+    void readFromRegionConfigFile(); // прочитати конфігурацію сирени з файлу
     QList<alarmConfig_t> getAlarmConfigList(); // отримати список конфігурацій сирен
     QList<regionConfig_t> getRegionConfigList(); // отримати список конфігурацій регіонів
+    bool deleteAlarmConfigFromFile(const QString& name); // видалити конфігурацію сирени
+    bool deleteRegionConfigFromFile(const QString& name); // видалити конфігурацію сирени
 
 
 
@@ -54,6 +58,7 @@ private:
     QList<regionConfig_t> regionConfigList; // список конфігурацій регіонів
     QFile alarmFile; // файл для збереження конфігурацій сирен
     QFile regionFile; // файл для збереження конфігурацій регіонів
+    void overwriteRegionFile(); // переписати дані з списку в файл
 
 };
 

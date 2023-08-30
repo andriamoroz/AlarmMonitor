@@ -45,7 +45,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event){
 
     if (obj == ui->treeView->viewport()  && event->type() == QEvent::MouseButtonPress)
     {
-       QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
         if (mouseEvent->button() == Qt::LeftButton)
         {
 
@@ -104,12 +104,17 @@ void MainWindow::onAddNewAlarm()
     newAlarmConfig.id = alarmDialog.getIdEdtLineText();
     newAlarmConfig.ipAddress = alarmDialog.getIpEdtLineText();
     newAlarmConfig.macAddress = alarmDialog.getMacEdtLineText();
-    configManager->addAlarmConfig(newAlarmConfig);
-    configManager->saveToFile(newAlarmConfig);
-    newTreeItem->setObjectName(alarmDialog.getNameEdtLineText());
-    _treeModel->addItem(newTreeItem, ui->treeView->currentIndex());
-
-
+    newAlarmConfig.fatherName = _treeModel->getObjectName(ui->treeView->currentIndex());
+    if(configManager->addAlarmConfig(newAlarmConfig))
+    {
+        configManager->saveToFile(newAlarmConfig);
+        newTreeItem->setObjectName(alarmDialog.getNameEdtLineText());
+        _treeModel->addItem(newTreeItem, ui->treeView->currentIndex());
+    }
+    else
+    {
+        delete newTreeItem;
+    }
 
     //delete newItem; // якщо видалити newItem то він не зявляється в списку
 }
@@ -128,9 +133,19 @@ void MainWindow::onAddNewRegion()
     }
     newRegionConfig.name = regionDialog.getNameEdtLineText();
     newRegionConfig.id = regionDialog.getIdEdtLineText();
+    newRegionConfig.fatherName = _treeModel->getObjectName(ui->treeView->currentIndex());
+    //newRegionConfig.fatherName =
+    if(configManager->addRegionConfig(newRegionConfig))
+    {
+        configManager->saveToFile(newRegionConfig);
+        newTreeItem->setObjectName(regionDialog.getNameEdtLineText());
+        _treeModel->addItem(newTreeItem, ui->treeView->currentIndex());
+    }
+    else
+    {
+        delete newTreeItem;
+    }
 
-    newTreeItem->setObjectName(regionDialog.getNameEdtLineText());
-    _treeModel->addItem(newTreeItem, ui->treeView->currentIndex());
 
 }
 
@@ -138,60 +153,99 @@ void MainWindow::onRemoveAlarmOrRegion()
 {
     QModelIndex index = ui->treeView->currentIndex();
     QString name = _treeModel->getObjectName(index);
-        if(index.isValid()){
+    if(index.isValid() && name != firstTreeItem->objectName())
+    {
+        const QList<alarmConfig_t>& tmpAlarmConfigList = configManager->getAlarmConfigList();
+        const QList<regionConfig_t>& tmpRegionConfigList = configManager->getRegionConfigList();
+        bool found = false;
+
+        for(const auto& curentConfig : tmpAlarmConfigList)
         {
-            if(name != firstTreeItem->objectName()){
-                qDebug() << "onRemoveAlarm";
-                _treeModel->removeItem(index);
+            if(curentConfig.name == name)
+            {
+                configManager->deleteAlarmConfigFromFile(name);
+                found = true;
+                break;
             }
         }
+        if(!found)
+        {
+            for(const auto& curentConfig : tmpRegionConfigList)
+            {
+                if(curentConfig.name == name)
+                {
+                    configManager->deleteRegionConfigFromFile(name);
+                    break;
+                }
+            }
         }
+
+        _treeModel->removeItem(index);
+        qDebug() << "onRemoveAlarmOrRegion";
+        чомусь крашиться програма, при видаленні одного з елементів дерева, який не є останій
+        при видалені останього, програма не вилітає
+
+    }
 }
 
 void MainWindow::onConfiguration()
 {
     QModelIndex index = ui->treeView->currentIndex();
-        if(index.isValid()){
+    if(index.isValid()){
         {
             //_treeModel->
             qDebug() << "onConfiguration";
         }
-        }
+    }
 }
 
 void MainWindow::configTreeMetod()
 {
-        //створюємо модель дерева
-        _treeModel = new ObjectTreeModel(this);
-        QStringList cols;
-        cols << "objectName";
-        _treeModel->setColumns(cols);
-        // створюємо конфігураційні дані для регіону
-        regionConfig_t firstRegionConfig; // створюємо об'єкт структури для регіону
-        QList<regionConfig_t> tmpRegionConfigList; // створюємо список структур для регіонів
-        tmpRegionConfigList = configManager->getRegionConfigList();
-        if(tmpRegionConfigList.isEmpty())
-        {
-            firstRegionConfig.name = "Перший";
-            firstRegionConfig.id = 1;
-            configManager->addRegionConfig(firstRegionConfig);
-            configManager->saveToFile(firstRegionConfig);
-        }
-        else
-        {
-            firstRegionConfig = tmpRegionConfigList.first();
-        }
-        // задаємо назву батькіському елементу
-        firstTreeItem = new QObject(this);
-        firstTreeItem->setObjectName(firstRegionConfig.name);
-        firstTreeItem->objectName();
-        // Додаємо елементи до моделі
-        _treeModel->addItem(firstTreeItem,QModelIndex());
-        // Встановлюємо модель у QTreeView
-        ui->treeView->setModel(_treeModel);
-        // Встановлюємо фільтр подій для QTreeView
-        ui->treeView->viewport()->installEventFilter(this);
+    //створюємо модель дерева
+    _treeModel = new ObjectTreeModel(this);
+    QStringList cols;
+    cols << "objectName";
+    _treeModel->setColumns(cols);
+    // створюємо конфігураційні дані для регіону
+    regionConfig_t firstRegionConfig; // створюємо об'єкт структури для регіону
 
+    bool checkIsEmptyFileFlag = false; // флаг для перевірки чи файл пустий
+    const QList<regionConfig_t>& tmpRegionConfigList = configManager->getRegionConfigList();
+    if(!tmpRegionConfigList.isEmpty()) // перевіряємо чи список структур для регіонів не пустий
+    {
+        firstRegionConfig = tmpRegionConfigList.first();
+        checkIsEmptyFileFlag = true;
+    }
+    else
+    {
+        firstRegionConfig.name = "Перший";
+        firstRegionConfig.fatherName = "root";
+        firstRegionConfig.id = 1;
+        configManager->addRegionConfig(firstRegionConfig);
+        configManager->saveToFile(firstRegionConfig);
+    }
+    // задаємо назву батькіському елементу
+    firstTreeItem = new QObject(this);
+    firstTreeItem->setObjectName(firstRegionConfig.name);
+    firstTreeItem->objectName();
+    // Додаємо елементи до моделі
+    _treeModel->addItem(firstTreeItem,QModelIndex());
+    if(checkIsEmptyFileFlag)
+    {
+        addItemFromFileToTreeMetod();
+    }
+    // Встановлюємо модель у QTreeView
+    ui->treeView->setModel(_treeModel);
+    // Встановлюємо фільтр подій для QTreeView
+    ui->treeView->viewport()->installEventFilter(this);
+
+
+}
+
+void MainWindow::addItemFromFileToTreeMetod()
+{
+    const QList<alarmConfig_t>& tmpAlarmConfigList = configManager->getAlarmConfigList(); // отримуємо список структур для сигналізацій
+    const QList<regionConfig_t>& tmpRegionConfigList = configManager->getRegionConfigList();
 
 }
 
