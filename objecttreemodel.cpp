@@ -1,6 +1,6 @@
 #include "objecttreemodel.h"
 #include <QDebug>
-#include <QAbstractItemModel>
+
 
 
 ObjectTreeModel::ObjectTreeModel(QObject* parent)
@@ -25,8 +25,6 @@ void ObjectTreeModel::addItem(QObject *item, const QModelIndex &parentIdx)
     item->setParent(objByIndex(parentIdx)); // назначаємо батьківський елемент для item
     savedIndexes.append(parentIdx); // додаємо індекс до списку збережених індексів
     endInsertRows(); // завершення вставки нових рядків у модель
-
-
 }
 
 // метод для видалення елемента з моделі дерева.
@@ -47,15 +45,22 @@ bool ObjectTreeModel::removeItem(const QModelIndex &index)
     QObject *child = parent->findChild<QObject*>(item->objectName());
     if(!child)
         return false;
-
-     // Видаляємо дитинський об'єкт
-    beginRemoveRows(index.parent(), index.row(), index.row());
+    // Видаляємо дитинський об'єкт
     child->deleteLater();
+    beginRemoveRows(index.parent(), index.row(), index.row());
+    removeRow(index.row(), index.parent()); // видаляємо рядки
     savedIndexes.removeAt(index.row()); // видаляємо індекс зі списку збережених індексів
     endRemoveRows();
+    beginRemoveColumns(index.parent(), index.column(), index.column());
+    removeColumn(index.column(), index.parent());
+    endRemoveColumns();
+
 
     return true;
 }
+
+
+
 
 QList<QModelIndex> ObjectTreeModel::getSavedIndexes()
 {

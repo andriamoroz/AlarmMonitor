@@ -37,6 +37,7 @@ class ConfigManager
 {
 public:
     ConfigManager();
+    ~ConfigManager();
 
     bool addAlarmConfig(const alarmConfig_t& alarmConfig); // додати конфігурацію сирени
     bool addRegionConfig(const regionConfig_t& regionConfig); // додати конфігурацію регіону

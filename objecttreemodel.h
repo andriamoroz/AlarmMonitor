@@ -3,9 +3,9 @@
 
 #include <QAbstractItemModel>
 #include <QObject>
-#include <QMouseEvent>
+//#include <QMouseEvent>
 #include <QModelIndex>
-#include <qtcore>
+#include <QtCore>
 
 
 
@@ -20,6 +20,7 @@ public:
     bool removeItem(const QModelIndex &index);
     QList<QModelIndex> getSavedIndexes();
     QString getObjectName(const QModelIndex &index) const;
+
 
 
 protected:

@@ -179,11 +179,12 @@ void MainWindow::onRemoveAlarmOrRegion()
                 }
             }
         }
-
-        _treeModel->removeItem(index);
+        bool success;
+        success = _treeModel->removeItem(index);
+        if (success) {
+            ui->treeView->update();
+        }
         qDebug() << "onRemoveAlarmOrRegion";
-        чомусь крашиться програма, при видаленні одного з елементів дерева, який не є останій
-        при видалені останього, програма не вилітає
 
     }
 }

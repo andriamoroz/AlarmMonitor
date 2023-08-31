@@ -8,6 +8,10 @@ ConfigManager::ConfigManager(): alarmFile("alarmConfig.dat"), regionFile("region
     readFromRegionConfigFile(); // прочитати конфігурацію регіонів з файлу
 
 }
+ConfigManager::~ConfigManager()
+{
+
+}
 
 bool ConfigManager::addAlarmConfig(const alarmConfig_t &alarmConfig)
 {
@@ -141,7 +145,16 @@ void ConfigManager::readFromAlarmConfigFile()
         }
         in >> alarmConfig.macAddress;
         in >> alarmConfig.id;
+        if(in.status() != QDataStream::Ok)
+        {
+            qDebug() << "Error reading from file.";
+            regionFile.close();
+            return;
+        }
+        alarmConfigList.append(alarmConfig);
+
     }
+
     alarmFile.close();
 
 }
@@ -239,29 +252,19 @@ void ConfigManager::overwriteRegionFile()
 
     QDataStream out(&regionFile); // створення потоку для запису в файл
     out.setVersion(QDataStream::Qt_5_0); // встановлення версії потоку, версія потоку встановлюється для того щоб забезпечити кросплатформенність
-    const QList<regionConfig_t> tmpRegionConfigList = regionConfigList;
-    for(const auto& regionConfig : tmpRegionConfigList){
+
+    for(auto it = regionConfigList.constBegin(); it!= regionConfigList.constEnd(); it++)
+    {
+        const auto& regionConfig = *it;
         out << regionConfig.name << regionConfig.fatherName <<regionConfig.id;
         if(out.status() != QDataStream::Ok)
         {
             qDebug() << "Error writing to regionFile.";
             QMessageBox::warning(nullptr, "Warning", "Error writing to regionFile.");
+            break;
         }
     }
 
     regionFile.close();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
