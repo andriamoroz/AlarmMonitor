@@ -135,9 +135,9 @@ void ConfigManager::readFromAlarmConfigFile()
     while(!in.atEnd()){
         in >> alarmConfig.name;
         in >> ipAdressString;
-        if(ipAdressString.size() == sizeof(SOCKADDR_IN))
+        if(ipAdressString.size() == sizeof(sockaddr_in))
         {
-            memcpy(&alarmConfig.ipAddress, ipAdressString.constData(), sizeof(SOCKADDR_IN)); // копіювання ip адреси з строки в структуру
+            memcpy(&alarmConfig.ipAddress, ipAdressString.constData(), sizeof(sockaddr_in)); // копіювання ip адреси з строки в структуру
         }
         else
         {

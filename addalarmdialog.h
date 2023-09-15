@@ -3,8 +3,11 @@
 
 #include <QDialog>
 #include <QDebug>
-#include <winsock2.h>
-#include <ws2tcpip.h>
+
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 #include <QMessageBox>
 #include <QRegularExpressionValidator>
 
@@ -20,7 +23,7 @@ public:
     explicit AddAlarmDialog(QWidget *parent = nullptr);
     ~AddAlarmDialog();
     QString getNameEdtLineText(){return  nameEdtLineText;} // метод для отримання назви сирени
-    SOCKADDR_IN getIpEdtLineText(){return ipAddress;} // метод для отримання ip адреси сирени
+    sockaddr_in getIpEdtLineText(){return ipAddress;} // метод для отримання ip адреси сирени
     QString getMacEdtLineText() {return macEdtLineText;} // метод для отримання mac адреси сирени
     int getIdEdtLineText(){return idEdtLineText.toInt();} // метод для отримання id сирени
 
@@ -40,7 +43,7 @@ private:
     QString idEdtLineText;
 
     void socketSetUp();
-    SOCKADDR_IN ipAddress;// метод для налаштування ip та порту
+    sockaddr_in ipAddress;// метод для налаштування ip та порту
 
 
 

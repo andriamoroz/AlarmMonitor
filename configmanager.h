@@ -1,8 +1,12 @@
 #ifndef CONFIGMANAGER_H
 #define CONFIGMANAGER_H
 #include <QString>
-#include <winsock2.h>
-#include <ws2tcpip.h>
+//#include <winsock2.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+//#include <ws2tcpip.h>
 #include <QDebug>
 #include <QList>
 #include <QFile>
@@ -15,7 +19,7 @@ typedef struct
 {
     QString name;
     QString fatherName;
-    SOCKADDR_IN ipAddress;
+    sockaddr_in ipAddress;
     QString macAddress;
     int id;
 } alarmConfig_t;

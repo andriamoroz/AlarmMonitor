@@ -14,7 +14,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(Qt5Network REQUIRED)
 
 
-set(PROJECT_SOURCESч
+set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
         mainwindow.h
@@ -54,11 +54,9 @@ else()
 endif()
 
 target_link_libraries(AlarmMonitor PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network )
-if(WIN32)
-    target_link_libraries(AlarmMonitor PRIVATE ws2_32)
-else()
-    target_link_libraries(AlarmMonitor PRIVATE socket)
-endif()
+
+# target_link_libraries(AlarmMonitor PRIVATE "-lsocket")
+
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
